@@ -3,11 +3,13 @@
     <type>org.netbeans.modules.java.j2seproject</type>
     <configuration>
         <data xmlns="http://www.netbeans.org/ns/j2se-project/3">
-            <name>SSE 554 Project 1</name>
+            <name>SSE 554 Project 3</name>
             <source-roots>
-                <root id="src.dir" name="src"/>
+                <root id="src.dir" name="Source Code"/>
             </source-roots>
-            <test-roots/>
+            <test-roots>
+                <root id="test.test.dir" name="Test Code"/>
+            </test-roots>
         </data>
     </configuration>
 </project>

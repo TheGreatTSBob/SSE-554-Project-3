@@ -7,6 +7,9 @@ import java.util.ArrayList;
 import org.junit.Test;
 
 import banking.Account.CompoundResult;
+import banking.Bank;
+import banking.CheckingAccount;
+import banking.SavingsAccount;
 
 public class BankTest {
 

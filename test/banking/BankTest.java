@@ -7,9 +7,6 @@ import java.util.ArrayList;
 import org.junit.Test;
 
 import banking.Account.CompoundResult;
-import banking.Bank;
-import banking.CheckingAccount;
-import banking.SavingsAccount;
 
 public class BankTest {
 
@@ -60,7 +57,7 @@ public class BankTest {
 		assertEquals(test.compoundAccount("Daryl"),CompoundResult.RATE);
 		
 		ArrayList<CompoundResult> testList = test.compoundAll();
-		ArrayList<CompoundResult> testList2 = new ArrayList<CompoundResult>();
+		ArrayList<CompoundResult> testList2 = new ArrayList<>();
 		
 		testList2.add(CompoundResult.RATE);
 		testList2.add(CompoundResult.NONE);

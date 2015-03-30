@@ -3,14 +3,17 @@ package banking;
 import java.util.ArrayList;
 
 import banking.Account.CompoundResult;
+import data.Database;
 
 public class Bank {
 	
 	protected ArrayList<Account> accounts;
+        protected Database database;
 	
 	public Bank()
 	{
-		accounts = new ArrayList<Account>();
+            database = new Database();
+            accounts = new ArrayList<Account>();
 	}
 	
 	public void addAccount(Account acc)
@@ -122,4 +125,14 @@ public class Bank {
 	{
 		return accounts.size();
 	}
+        
+        private void getData()
+        {
+            accounts = database.readFromDatabase();
+        }
+        
+        private void setData()
+        {
+            database.writeToDatabase(accounts);
+        }
 }

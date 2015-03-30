@@ -1,8 +1,5 @@
 package banking;
 
-import banking.Account;
-import banking.CheckingAccount;
-import banking.SavingsAccount;
 import static org.junit.Assert.*;
 
 import org.junit.Test;

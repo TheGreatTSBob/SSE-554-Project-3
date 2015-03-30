@@ -85,12 +85,13 @@ public class BankClient {
         return false;
     }
     
-    public boolean accountAction(double amount)
+    public boolean accountAction(String name, double amount)
     {
         try
         {
             Integer i = 3;
             outToServer.writeObject(i);
+            outToServer.writeObject(name);
             outToServer.writeObject(amount);
             boolean complete = (boolean)inFromServer.readObject();
             return complete;
@@ -142,6 +143,20 @@ public class BankClient {
         catch (ClassNotFoundException e) {e.printStackTrace();}
         
         return balance;
+    }
+    
+    public String withdrawCheck(String name)
+    {
+        String text = "";
+        try
+        {
+            Integer i = 7;
+            outToServer.writeObject(i);
+            outToServer.writeObject(name);
+            text = (String)inFromServer.readObject();
+        } catch (IOException e) {e.printStackTrace();}
+        catch (ClassNotFoundException e) {e.printStackTrace();}
         
+        return text;
     }
 }

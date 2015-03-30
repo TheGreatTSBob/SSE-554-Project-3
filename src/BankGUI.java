@@ -93,11 +93,11 @@ public class BankGUI {
 		public void updateList()
 		{
 			listModel.clear();
-			ArrayList<String> labels = bank.getLabels();
+			// ArrayList<String> labels = bank.getLabels();
                         
-                        ArrayList<String> accounts = socket.init();
+                        ArrayList<String> accounts = socket.initAccounts();
 			
-			for(String s: labels)
+			for(String s: accounts)
 			{
 				listModel.addElement(s.trim());
 			}
@@ -244,10 +244,7 @@ public class BankGUI {
 			
 			int index = bank.getIndex(holder);
 			
-			if(!bank.isChecking(index))
-			{
-				witButton.setText("Withdraw ("+ bank.remainingWithdrawals(index) + ")");
-			}
+			witButton.setText(socket.withdrawCheck(holder));
 			
 			frame.getContentPane().add(BorderLayout.CENTER, centerPanel);
 			frame.getContentPane().add(BorderLayout.NORTH, buttonPanel);
@@ -263,16 +260,13 @@ public class BankGUI {
 			public void actionPerformed(ActionEvent arg0) {
 			
 				double amount = Double.parseDouble(deltaField.getText());
+				amount = 0-amount;
 				
-				bank.withdraw(amount, holder, password);
-				balField.setText("" + bank.getBalance(holder, password));
+                                socket.accountAction(holder, amount);
+                                // bank.withdraw(amount, holder, password);
+				balField.setText("" + socket.getBalance(holder));
 				
-				int index = bank.getIndex(holder);
-				
-				if(!bank.isChecking(index))
-				{
-					witButton.setText("Withdraw ("+ bank.remainingWithdrawals(index) + ")");
-				}
+                                witButton.setText(socket.withdrawCheck(holder));
 			}
 		}
 		
@@ -283,8 +277,8 @@ public class BankGUI {
 			
 				double amount = Double.parseDouble(deltaField.getText());
 				
-				bank.deposit(amount, holder, password);
-				balField.setText("" + bank.getBalance(holder, password));
+                                socket.accountAction(holder, amount);
+				balField.setText("" + socket.getBalance(holder));
 			}	
 		}
 	}
@@ -398,19 +392,17 @@ public class BankGUI {
 			if(add.check.isSelected())
 			{
                             socket.addAccount(holder, pass, bal, 1);
-                            ArrayList<String> accounts = socket.initAccounts();
 //                            CheckingAccount acc = new CheckingAccount(bal, holder, pass);
 //                            bank.addAccount(acc);
 			}
 			else
 			{
                             socket.addAccount(holder, pass, bal, 2);
-                            ArrayList<String> accounts = socket.initAccounts();
 //                            SavingsAccount acc = new SavingsAccount(bal, holder, pass);
 //                            bank.addAccount(acc);
 			}
 			
-			// home.updateList();
+			home.updateList();
 			add.frame.dispose();
 		}
 	}

@@ -32,7 +32,6 @@ public class ClientThread extends Thread{
     {
         try {
             init();
-            begin();
         } catch (Exception e){
             e.printStackTrace();
         }
@@ -44,8 +43,7 @@ public class ClientThread extends Thread{
         this.inFromClient = new ObjectInputStream(csocket.getInputStream());
         
         outToClient.writeObject("Hello and welcome to the Bank Socket Server!");
-        
-        accountInit();
+        begin();
     }
     
     public boolean accountInit() throws IOException, ClassNotFoundException
@@ -105,6 +103,10 @@ public class ClientThread extends Thread{
                     case 6: complete = getBalance();
                         break;
                         
+                    // Get number of withdrawals left
+                    case 7: complete = withdrawals();
+                        break;
+                        
                     default: break;
                 }
             }
@@ -141,7 +143,6 @@ public class ClientThread extends Thread{
     {
         try
         {
-            System.out.println("Remove account");
             String name = (String)inFromClient.readObject();
             
             // Put account removal code here
@@ -182,10 +183,11 @@ public class ClientThread extends Thread{
     {
         try
         {
+            String name = (String)inFromClient.readObject();
             Double amount = (Double)inFromClient.readObject();
             
             // Perform action on account here
-            System.out.println("Account action performed");
+            System.out.println("Account action performed on " + name + "'s account");
             
             return true;
         } catch (IOException e) {
@@ -223,6 +225,27 @@ public class ClientThread extends Thread{
             System.out.println("Getting account balance of " + name);
             
             outToClient.writeObject(balance);
+            return true;
+        } catch (IOException e) {
+            System.out.println("IOException");
+        } catch (ClassNotFoundException e) {
+            System.out.println("Classnotfoundexception");
+        }
+        return false;
+    }
+    
+    public boolean withdrawals()
+    {
+        try
+        {
+            // Should be in form of "Withdraw (#)" if checking or "Withdraw"
+            String text = "Withdraw"; 
+            String name = (String)inFromClient.readObject();
+            
+            // Get balance
+            System.out.println("Getting account withdrawals of " + name);
+            
+            outToClient.writeObject(text);
             return true;
         } catch (IOException e) {
             System.out.println("IOException");

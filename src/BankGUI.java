@@ -16,8 +16,9 @@ public class BankGUI {
 	UseGUI use;
 	CmpGUI cmp;
 	Bank bank;
+        BankClient socket;
 
-	public BankGUI(Bank bank)
+	public BankGUI(Bank bank, BankClient socket)
 	{
 		home = new HomeGUI();
 		add = new AddGUI();
@@ -25,6 +26,7 @@ public class BankGUI {
 		use = new UseGUI();
 		cmp = new CmpGUI();
 		this.bank = bank;
+                this.socket = socket;
 	}
 	
 	
@@ -92,6 +94,8 @@ public class BankGUI {
 		{
 			listModel.clear();
 			ArrayList<String> labels = bank.getLabels();
+                        
+                        ArrayList<String> accounts = socket.init();
 			
 			for(String s: labels)
 			{
@@ -113,11 +117,13 @@ public class BankGUI {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				
-				String text = home.accountList.getSelectedValue();
-				String holder = text.substring(0, text.indexOf('*')).trim();
-				
-				bank.removeAccount(holder);
-				home.updateList();
+                            String text = home.accountList.getSelectedValue();
+                            String holder = text.substring(0, text.indexOf('*')).trim();
+
+                            socket.removeAccount(holder);
+                            socket.initAccounts();
+//				bank.removeAccount(holder);
+//				home.updateList();
 			}
 			
 		}
@@ -181,13 +187,15 @@ public class BankGUI {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-							
-				if(bank.authenticateAccount(nameField.getText(), passField.getText()))
-				{
-					auth.frame.dispose();
-					use.show(bank.getBalance(nameField.getText(), passField.getText()),
-							nameField.getText(), passField.getText());
-				}
+
+                            String name = nameField.getText();
+                            String pass = passField.getText();
+                            
+                            if(socket.authenticate(name, pass))
+                            {
+                                auth.frame.dispose();
+                                use.show(socket.getBalance(name), name, pass);
+                            }
 			}
 		}
 		class CancelListener implements ActionListener {
@@ -307,11 +315,11 @@ public class BankGUI {
 			frame.setResizable(false);
 			frame.setVisible(true);
 		
-			ArrayList<CompoundResult> result = bank.compoundAll();
+			ArrayList<String> accounts = socket.interest();
 			
-			for(int i =0; i < bank.size(); i++)
+			for(int i =0; i < accounts.size(); i++)
 			{
-				listModel.addElement(bank.getHolder(i) + "   " + result.get(i));
+				listModel.addElement(accounts.get(i) + "   " + socket.getBalance(accounts.get(i)));
 			}
 		}
 	}
@@ -389,16 +397,20 @@ public class BankGUI {
 			
 			if(add.check.isSelected())
 			{
-				CheckingAccount acc = new CheckingAccount(bal, holder, pass);
-				bank.addAccount(acc);
+                            socket.addAccount(holder, pass, bal, 1);
+                            ArrayList<String> accounts = socket.initAccounts();
+//                            CheckingAccount acc = new CheckingAccount(bal, holder, pass);
+//                            bank.addAccount(acc);
 			}
 			else
 			{
-				SavingsAccount acc = new SavingsAccount(bal, holder, pass);
-				bank.addAccount(acc);
+                            socket.addAccount(holder, pass, bal, 2);
+                            ArrayList<String> accounts = socket.initAccounts();
+//                            SavingsAccount acc = new SavingsAccount(bal, holder, pass);
+//                            bank.addAccount(acc);
 			}
 			
-			home.updateList();
+			// home.updateList();
 			add.frame.dispose();
 		}
 	}

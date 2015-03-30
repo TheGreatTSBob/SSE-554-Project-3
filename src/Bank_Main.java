@@ -7,7 +7,10 @@ public class Bank_Main {
 		Bank bank = new Bank();
 		bank.addAccount(new SavingsAccount(200, "Daryl", "pass"));
 		
-		BankGUI main = new BankGUI(bank);
+                BankClient socket = new BankClient();
+                socket.connect();
+                
+		BankGUI main = new BankGUI(bank, socket);
 		
 		main.showHome();
 

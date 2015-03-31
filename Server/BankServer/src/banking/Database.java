@@ -67,7 +67,7 @@ public class Database {
                                + "'" + a.holder + "'" + "," 
                                + "'" + a.password + "'" + ","
                                + a.balance + ","
-                               + "'Savings', " 
+                               + "'Checking', " 
                                + a.rate + ", "
                                + ((CheckingAccount) a).minimumBalance + ");" );
             }

@@ -13,6 +13,7 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.util.ArrayList;
 import banking.*;
+import banking.Account.CompoundResult;
 
 /**
  *
@@ -215,12 +216,8 @@ public class ClientThread extends Thread{
         try
         {
             System.out.println("Perform interest operation");
-            ArrayList<String> account = new ArrayList<String>();
-         
-            bank.compoundAll();
             
-            //To update the interest portion the arraylist of results needs to
-            // be sent here
+            ArrayList<CompoundResult> account = bank.compoundAll();
             
             outToClient.writeObject(account);
             return true;

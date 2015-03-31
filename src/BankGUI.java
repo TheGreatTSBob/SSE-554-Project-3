@@ -311,11 +311,12 @@ public class BankGUI {
 			frame.setResizable(false);
 			frame.setVisible(true);
 		
-			ArrayList<String> accounts = socket.interest();
+			ArrayList<CompoundResult> results = socket.interest();
 			
-			for(int i =0; i < accounts.size(); i++)
+			for(int i =0; i < bank.size(); i++)
 			{
-				listModel.addElement(accounts.get(i) + "  " );
+				listModel.addElement(bank.getHolder(i) + "  " 
+                                        + results.get(i));
                                 //add a view of the compounding results
 			}
 		}

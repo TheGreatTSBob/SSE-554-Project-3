@@ -84,16 +84,6 @@ public class Bank {
 			value.add(a.compoundInterest());
 		}
 		
-		return value;
-                
-	}
-	
-	public CompoundResult compoundAccount(String holder)
-	{
-		int index = getIndex(holder);
-		
-		CompoundResult res = accounts.get(index).compoundInterest();
-                
                 /*************************************
                  * 
                  *  Consider adding a database refresh when an account is added
@@ -103,6 +93,16 @@ public class Bank {
                  ***********************************/
                 
                 setData();
+                
+		return value;
+                
+	}
+	
+	public CompoundResult compoundAccount(String holder)
+	{
+		int index = getIndex(holder);
+		
+		CompoundResult res = accounts.get(index).compoundInterest();
                 
                 return res;
                 

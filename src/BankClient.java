@@ -1,4 +1,5 @@
 
+import banking.Account.CompoundResult;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -101,17 +102,20 @@ public class BankClient {
         return false;
     }
     
-    public ArrayList<String> interest()
+    public ArrayList<CompoundResult> interest()
     {
+        
         try
         {
             Integer i = 4;
             outToServer.writeObject(i);
-            ArrayList<String> account = (ArrayList<String>)inFromServer.readObject();
+            ArrayList<CompoundResult> results = (ArrayList<CompoundResult>)inFromServer.readObject();
             boolean complete = (boolean)inFromServer.readObject();
+            
+            return results;
         } catch (IOException e) {e.printStackTrace();}
         catch (ClassNotFoundException e) {e.printStackTrace();}
-        
+                
         return null;
     }
     

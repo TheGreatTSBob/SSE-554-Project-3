@@ -10,6 +10,7 @@ public class CheckingAccount extends Account {
 		rate = .1;
 	}
 	
+        @Override
 	protected void withdraw(double amount, String password)
 	{
 		if(!authenticate(password))
@@ -19,9 +20,11 @@ public class CheckingAccount extends Account {
 			balance -= amount;
 	}
 	
+    
+        @Override
 	protected CompoundResult compoundInterest()
 	{
-		if (balance == 0)
+		if (balance == minimumBalance)
 			return CompoundResult.NONE;	
 		
 		if(balance > minimumBalance)
@@ -37,6 +40,7 @@ public class CheckingAccount extends Account {
 		}
 	}
 	
+        @Override
 	public String toString()
 	{
 		return holder + " *Checking*"; 

@@ -1,0 +1,12 @@
+TODO
+
+- Insert code to talk to database in clientThread
+- Remove system.out. (Not necessary)
+- Make database object to be used on server "synchronous" to ensure all threads
+	don't try to update at same time.	
+	
+If I could go back and redo it, I would make all objects passed through into
+arraylists. That way, we wouldnt need to mess with a the client or server stuff
+anymore, we would just need to properly prepare the arraylists before sending
+and know how to read them after receiving them. This would be much more resistant
+to change than the current implementation.

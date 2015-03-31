@@ -12,12 +12,15 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.SocketException;
 import java.util.ArrayList;
+import banking.*;
 
 /**
  *
  * @author Josh
  */
 public class ClientThread extends Thread{
+    
+    Bank bank;
     Socket csocket;
     ObjectOutputStream outToClient;
     ObjectInputStream inFromClient;
@@ -25,6 +28,7 @@ public class ClientThread extends Thread{
     public ClientThread(Socket csocket)
     {
         this.csocket = csocket;
+        bank = new Bank();
     }
     
     @Override
@@ -124,7 +128,11 @@ public class ClientThread extends Thread{
             Double balance = (Double)inFromClient.readObject();
             Integer accType = (Integer)inFromClient.readObject();
             
-            // Put account creation code here
+            if(accType == 2)
+                bank.addAccount(new SavingsAccount(balance, name, password));
+            else
+                bank.addAccount(new CheckingAccount(balance, name, password));
+            
             System.out.println("Name: " + name + "\tPassword: " + password + "\tBalance: " + balance);
             if (accType == 2) System.out.println("Savings Account");
             else System.out.println("Checking Account");
@@ -145,7 +153,7 @@ public class ClientThread extends Thread{
         {
             String name = (String)inFromClient.readObject();
             
-            // Put account removal code here
+            bank.removeAccount(name);
             System.out.println("Account of " + name + " deleted.");
             
             return true;
@@ -166,7 +174,7 @@ public class ClientThread extends Thread{
             String name = (String)inFromClient.readObject();
             String password = (String)inFromClient.readObject();
 
-            // Put account authentication code here
+            bank.authenticateAccount(name, password);
             System.out.println("Account authenticated");
             
             return validated;
@@ -185,8 +193,12 @@ public class ClientThread extends Thread{
         {
             String name = (String)inFromClient.readObject();
             Double amount = (Double)inFromClient.readObject();
+            String password = (String) inFromClient.readObject();
             
-            // Perform action on account here
+            if(amount > 0)
+            {
+                bank.withdraw(amount, name, password);
+            }
             System.out.println("Account action performed on " + name + "'s account");
             
             return true;
@@ -202,9 +214,13 @@ public class ClientThread extends Thread{
     {
         try
         {
-            // Perform interest action here
             System.out.println("Perform interest operation");
             ArrayList<String> account = new ArrayList<String>();
+         
+            bank.compoundAll();
+            
+            //To update the interest portion the arraylist of results needs to
+            // be sent here
             
             outToClient.writeObject(account);
             return true;
@@ -220,8 +236,9 @@ public class ClientThread extends Thread{
         {
             Double balance = 0.0;
             String name = (String)inFromClient.readObject();
+            String password = (String)inFromClient.readObject();
             
-            // Get balance
+            bank.getBalance(name, password);
             System.out.println("Getting account balance of " + name);
             
             outToClient.writeObject(balance);

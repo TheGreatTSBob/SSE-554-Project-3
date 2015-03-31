@@ -38,7 +38,7 @@ public class Bank {
                  *
                  ***********************************/
                 
-//                setData();
+                setData();
 	}
 	
 	public void removeAccount(String holder)
@@ -57,7 +57,7 @@ public class Bank {
                  *
                  ***********************************/
                 
-//                setData();
+                setData();
 	}
 	
 	public int getIndex(String holder)
@@ -92,7 +92,7 @@ public class Bank {
 	{
 		int index = getIndex(holder);
 		
-		return accounts.get(index).compoundInterest();
+		CompoundResult res = accounts.get(index).compoundInterest();
                 
                 /*************************************
                  * 
@@ -102,7 +102,10 @@ public class Bank {
                  *
                  ***********************************/
                 
-//                setData();
+                setData();
+                
+                return res;
+                
 	}
 	
 	public Double getBalance(String holder, String password)
@@ -136,7 +139,7 @@ public class Bank {
                  *
                  ***********************************/
                 
-//                setData();
+                setData();
 	}
 	
 	public void deposit(double amount, String holder, String password)
@@ -153,7 +156,7 @@ public class Bank {
                  *
                  ***********************************/
                 
-//                setData();
+                setData();
 	}
 	
 	public ArrayList<String> getLabels()

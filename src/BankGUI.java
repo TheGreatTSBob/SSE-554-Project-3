@@ -194,7 +194,8 @@ public class BankGUI {
                             if(socket.authenticate(name, pass))
                             {
                                 auth.frame.dispose();
-                                use.show(socket.getBalance(name), name, pass);
+                                use.show(socket.getBalance(name, pass), 
+                                        name, pass);
                             }
 			}
 		}
@@ -262,9 +263,10 @@ public class BankGUI {
 				double amount = Double.parseDouble(deltaField.getText());
 				amount = 0-amount;
 				
-                                socket.accountAction(holder, amount);
+                                socket.accountAction(holder, password, amount);
                                 // bank.withdraw(amount, holder, password);
-				balField.setText("" + socket.getBalance(holder));
+				balField.setText("" + socket.getBalance(holder, 
+                                        password));
 				
                                 witButton.setText(socket.withdrawCheck(holder));
 			}
@@ -277,8 +279,9 @@ public class BankGUI {
 			
 				double amount = Double.parseDouble(deltaField.getText());
 				
-                                socket.accountAction(holder, amount);
-				balField.setText("" + socket.getBalance(holder));
+                                socket.accountAction(holder, password ,amount);
+				balField.setText("" + socket.getBalance(holder, 
+                                        password));
 			}	
 		}
 	}
@@ -313,7 +316,8 @@ public class BankGUI {
 			
 			for(int i =0; i < accounts.size(); i++)
 			{
-				listModel.addElement(accounts.get(i) + "   " + socket.getBalance(accounts.get(i)));
+				listModel.addElement(accounts.get(i) + "  " );
+                                //add a view of the compounding results
 			}
 		}
 	}

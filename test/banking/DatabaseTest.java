@@ -3,15 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package data;
+package banking;
 
 import com.mysql.jdbc.exceptions.jdbc4.MySQLSyntaxErrorException;
 import java.sql.*;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
-import org.junit.Rule;
-import org.junit.rules.ExpectedException;
 
 /**
  *
@@ -21,7 +19,7 @@ public class DatabaseTest {
     
     @Test(expected= MySQLSyntaxErrorException.class)
     @SuppressWarnings({"CallToPrintStackTrace"})
-    public void TestConnection() throws Exception
+    public void TestgetConnection() throws Exception
     {
        
         Database db = new Database();
@@ -49,7 +47,4 @@ public class DatabaseTest {
         //should create an exception because no such table exists
         stat.executeQuery("SELECT * From Test");        
     }
-    
-    
-    //Needs tests for the methods that change/ read the database also
 }

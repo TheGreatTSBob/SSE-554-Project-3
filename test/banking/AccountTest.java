@@ -45,7 +45,7 @@ public class AccountTest {
 		assertEquals(100, test2.balance, 0);
 		
 		//Penalty as max withdraws have been reached
-		test2.currentWithdrawls = test2.maxWithdrawls;
+		test2.currentWithdrawals = test2.maxWithdrawals;
 		test2.withdraw(100, correctPW);
 		assertEquals(90,test2.balance,0);
 		

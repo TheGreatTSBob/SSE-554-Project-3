@@ -52,9 +52,9 @@ public class ClientThread extends Thread{
     
     public boolean accountInit() throws IOException, ClassNotFoundException
     {
-        ArrayList<String> accounts = new ArrayList<String>();
-        
         // Get the accounts from the database
+        ArrayList<String> accounts = bank.getLabels();
+        
         System.out.println("Reset account list.");
         
         outToClient.writeObject(accounts);
@@ -260,6 +260,9 @@ public class ClientThread extends Thread{
             String name = (String)inFromClient.readObject();
             
             // Get balance
+            int index = bank.getIndex(name);
+            if (bank.isChecking(index))
+                text += " " + bank.remainingWithdrawals(index);
             System.out.println("Getting account withdrawals of " + name);
             
             outToClient.writeObject(text);

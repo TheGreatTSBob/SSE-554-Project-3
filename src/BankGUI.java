@@ -121,9 +121,8 @@ public class BankGUI {
                             String holder = text.substring(0, text.indexOf('*')).trim();
 
                             socket.removeAccount(holder);
-                            socket.initAccounts();
 //				bank.removeAccount(holder);
-//				home.updateList();
+				home.updateList();
 			}
 			
 		}

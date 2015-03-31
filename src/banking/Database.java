@@ -21,15 +21,15 @@ public class Database {
     
     Connection link;
     
-    public Database() throws SQLException, IOException
+    public Database(String database) throws SQLException, IOException
     {
-        link = getConnection();
+        link = getConnection(database);
     }
     
-    protected final Connection getConnection() throws SQLException, IOException
+    protected final Connection getConnection(String database) throws SQLException, IOException
     {
      
-       String url = "jdbc:mysql://localhost:3306/sse554";
+       String url = "jdbc:mysql://localhost:3306/" + database;
        String username = "root";
        String password = "password";
        

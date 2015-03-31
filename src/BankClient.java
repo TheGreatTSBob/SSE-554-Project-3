@@ -102,14 +102,14 @@ public class BankClient {
         return false;
     }
     
-    public ArrayList<CompoundResult> interest()
+    public ArrayList<String> interest()
     {
         
         try
         {
             Integer i = 4;
             outToServer.writeObject(i);
-            ArrayList<CompoundResult> results = (ArrayList<CompoundResult>)inFromServer.readObject();
+            ArrayList<String> results = (ArrayList<String>)inFromServer.readObject();
             boolean complete = (boolean)inFromServer.readObject();
             
             return results;

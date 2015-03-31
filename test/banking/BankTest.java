@@ -16,18 +16,18 @@ public class BankTest {
 	@Test
 	public void addTest() {
 		
-		Bank test = new Bank();
-		
-		assertEquals(test.accounts.size(), 0);
+		Bank test = new Bank("test");
+                		
+		int old_size = test.accounts.size();
 		
 		test.addAccount(new CheckingAccount(200, "Daryl", password));
-		assertEquals(test.accounts.size(), 1);	
+		assertEquals(test.accounts.size(), old_size+1);	
 	}
 
 	@Test
 	public void removeTest() {
 		
-		Bank test = new Bank();
+		Bank test = new Bank("test");
 		test.accounts.add(new CheckingAccount(200, "Daryl", password));
 		test.accounts.add(new CheckingAccount(300, "Daryl2", password));
 		test.accounts.add(new CheckingAccount(400, "Daryl3", password));
@@ -49,7 +49,7 @@ public class BankTest {
 	
 	@Test
 	public void compoundTest() {
-		Bank test = new Bank();
+		Bank test = new Bank("test");
 		test.accounts.add(new SavingsAccount(200, "Daryl", password));
 		test.accounts.add(new SavingsAccount(0, "Daryl2", password));
 		test.accounts.add(new SavingsAccount(-200, "Daryl3", password));
@@ -71,7 +71,7 @@ public class BankTest {
 	
 	@Test
 	public void getBalanceTest() {
-		Bank test = new Bank();
+		Bank test = new Bank("test");
 		test.accounts.add(new CheckingAccount(200, "Daryl", password));
 		
 		assertEquals(test.getBalance("Daryl", password ),200,0);
@@ -80,7 +80,7 @@ public class BankTest {
 	
 	@Test
 	public void withdrawTest() {
-		Bank test = new Bank();
+		Bank test = new Bank("test");
 		test.accounts.add(new CheckingAccount(200, "Daryl", password));
 		
 		test.withdraw(200,"Daryl", password );
@@ -90,7 +90,7 @@ public class BankTest {
 	
 	@Test
 	public void depositTest() {
-		Bank test = new Bank();
+		Bank test = new Bank("test");
 		test.accounts.add(new CheckingAccount(200, "Daryl", password));
 		
 		test.deposit(200,"Daryl", password );
@@ -100,10 +100,10 @@ public class BankTest {
 	
 	@Test
 	public void authenticateTest() {
-		Bank test = new Bank();
-		test.accounts.add(new CheckingAccount(200, "Daryl", password));
+		Bank test = new Bank("test");
+		test.accounts.add(new CheckingAccount(200, "DarylTest", password));
 		
-		assertTrue(test.authenticateAccount("Daryl", password));
+		assertTrue(test.authenticateAccount("DarylTest", password));
 		assertFalse(test.authenticateAccount("Daryl", notpassword));
 		
 	}

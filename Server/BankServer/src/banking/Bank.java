@@ -178,7 +178,10 @@ public class Bank {
 	
 	public int remainingWithdrawals(int index)
 	{
-		return ((SavingsAccount) accounts.get(index)).maxWithdrawals - 
+            if(accounts.get(index).getClass() != SavingsAccount.class)
+                return 0;
+            
+            return ((SavingsAccount) accounts.get(index)).maxWithdrawals - 
                       ((SavingsAccount) accounts.get(index)).currentWithdrawals;
 	}
 	

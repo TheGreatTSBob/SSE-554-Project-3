@@ -196,10 +196,13 @@ public class ClientThread extends Thread{
             Double amount = (Double)inFromClient.readObject();
             String password = (String) inFromClient.readObject();
             
-            if(amount > 0)
+            if(amount < 0)
             {
                 bank.withdraw(amount, name, password);
             }
+            else
+                bank.deposit(amount, name, password);
+            
             System.out.println("Account action performed on " + name + "'s account");
             
             return true;
@@ -217,9 +220,16 @@ public class ClientThread extends Thread{
         {
             System.out.println("Perform interest operation");
             
-            ArrayList<CompoundResult> account = bank.compoundAll();
+            ArrayList<String> results= new ArrayList<>();
             
-            outToClient.writeObject(account);
+            ArrayList<CompoundResult> cmp = bank.compoundAll();
+            
+            for(int i =0; i < bank.size(); i++)
+            {
+                results.add(bank.getHolder(i) + "  " + cmp.get(i).toString());
+            }
+            
+            outToClient.writeObject(results);
             return true;
         } catch (IOException e) {
             System.out.println("IOException");
@@ -235,7 +245,7 @@ public class ClientThread extends Thread{
             String name = (String)inFromClient.readObject();
             String password = (String)inFromClient.readObject();
             
-            bank.getBalance(name, password);
+            balance = bank.getBalance(name, password);
             System.out.println("Getting account balance of " + name);
             
             outToClient.writeObject(balance);
@@ -258,7 +268,7 @@ public class ClientThread extends Thread{
             
             // Get balance
             int index = bank.getIndex(name);
-            if (bank.isChecking(index))
+            if (!bank.isChecking(index))
                 text += " " + bank.remainingWithdrawals(index);
             System.out.println("Getting account withdrawals of " + name);
             

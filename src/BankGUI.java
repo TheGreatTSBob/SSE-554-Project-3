@@ -193,6 +193,9 @@ public class BankGUI {
                             if(socket.authenticate(name, pass))
                             {
                                 auth.frame.dispose();
+                                System.out.println("Name:" + name + ", Balance:"
+                                        + socket.getBalance(name, pass));
+                                
                                 use.show(socket.getBalance(name, pass), 
                                         name, pass);
                             }
@@ -311,12 +314,11 @@ public class BankGUI {
 			frame.setResizable(false);
 			frame.setVisible(true);
 		
-			ArrayList<CompoundResult> results = socket.interest();
+			ArrayList<String> results = socket.interest();
 			
-			for(int i =0; i < bank.size(); i++)
+			for(int i =0; i < results.size(); i++)
 			{
-				listModel.addElement(bank.getHolder(i) + "  " 
-                                        + results.get(i));
+				listModel.addElement(results.get(i));
                                 //add a view of the compounding results
 			}
 		}

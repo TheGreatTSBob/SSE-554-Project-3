@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ClassDiagram name="Reverse engineered BankServer 2015.03.31 03-58-22-352">
+  <ClassDiagramComponents>
+    <Class xPosition="20.0" yPosition="20.0" package="banking" isAbstract="true" name="Account" visibility="public">
+      <Constructors>
+        <Constructor name="Account" visibility="public">
+          <Argument type="double" name="balance"/>
+          <Argument type="String" name="holder"/>
+          <Argument type="String" name="password"/>
+        </Constructor>
+      </Constructors>
+      <Fields>
+        <Field name="balance" visibility="protected" type="double"/>
+        <Field name="holder" visibility="protected" type="String"/>
+        <Field name="password" visibility="protected" type="String"/>
+        <Field name="rate" visibility="protected" type="double"/>
+      </Fields>
+      <Methods>
+        <Method name="deposit" visibility="protected" returnType="void">
+          <Argument type="double" name="amount"/>
+          <Argument type="String" name="password"/>
+        </Method>
+        <Method name="withdraw" visibility="protected" returnType="void" isAbstract="true">
+          <Argument type="double" name="amount"/>
+          <Argument type="String" name="password"/>
+        </Method>
+        <Method name="getBalance" visibility="protected" returnType="Double">
+          <Argument type="String" name="password"/>
+        </Method>
+        <Method name="isOverdrawn" visibility="protected" returnType="Boolean">
+          <Argument type="String" name="password"/>
+        </Method>
+        <Method name="compoundInterest" visibility="protected" returnType="CompoundResult" isAbstract="true"/>
+        <Method name="authenticate" visibility="protected" returnType="Boolean">
+          <Argument type="String" name="password"/>
+        </Method>
+      </Methods>
+    </Class>
+    <Class xPosition="320.0" yPosition="20.0" package="banking" name="Bank" visibility="public">
+      <Constructors>
+        <Constructor name="Bank" visibility="public"/>
+      </Constructors>
+      <Fields>
+        <Field name="accounts" visibility="protected" type="ArrayList&lt;Account&gt;"/>
+        <Field name="database" visibility="public" type="Database"/>
+      </Fields>
+      <Methods>
+        <Method name="addAccount" visibility="public" returnType="void">
+          <Argument type="Account" name="acc"/>
+        </Method>
+        <Method name="removeAccount" visibility="public" returnType="void">
+          <Argument type="String" name="holder"/>
+        </Method>
+        <Method name="getIndex" visibility="public" returnType="int">
+          <Argument type="String" name="holder"/>
+        </Method>
+        <Method name="getHolder" visibility="public" returnType="String">
+          <Argument type="int" name="index"/>
+        </Method>
+        <Method name="compoundAll" visibility="public" returnType="ArrayList&lt;CompoundResult&gt;"/>
+        <Method name="compoundAccount" visibility="public" returnType="CompoundResult">
+          <Argument type="String" name="holder"/>
+        </Method>
+        <Method name="getBalance" visibility="public" returnType="Double">
+          <Argument type="String" name="holder"/>
+          <Argument type="String" name="password"/>
+        </Method>
+        <Method name="authenticateAccount" visibility="public" returnType="Boolean">
+          <Argument type="String" name="holder"/>
+          <Argument type="String" name="password"/>
+        </Method>
+        <Method name="withdraw" visibility="public" returnType="void">
+          <Argument type="double" name="amount"/>
+          <Argument type="String" name="holder"/>
+          <Argument type="String" name="password"/>
+        </Method>
+        <Method name="deposit" visibility="public" returnType="void">
+          <Argument type="double" name="amount"/>
+          <Argument type="String" name="holder"/>
+          <Argument type="String" name="password"/>
+        </Method>
+        <Method name="getLabels" visibility="public" returnType="ArrayList&lt;String&gt;"/>
+        <Method name="isChecking" visibility="public" returnType="boolean">
+          <Argument type="int" name="index"/>
+        </Method>
+        <Method name="remainingWithdrawals" visibility="public" returnType="int">
+          <Argument type="int" name="index"/>
+        </Method>
+        <Method name="size" visibility="public" returnType="int"/>
+        <Method name="getData" visibility="public" returnType="void"/>
+        <Method name="setData" visibility="public" returnType="void"/>
+      </Methods>
+    </Class>
+    <Class xPosition="620.0" yPosition="20.0" package="banking" name="CheckingAccount" visibility="public">
+      <Constructors>
+        <Constructor name="CheckingAccount" visibility="public">
+          <Argument type="double" name="balance"/>
+          <Argument type="String" name="holder"/>
+          <Argument type="String" name="password"/>
+        </Constructor>
+      </Constructors>
+      <Fields>
+        <Field name="minimumBalance" visibility="protected" type="double"/>
+      </Fields>
+      <Methods>
+        <Method name="withdraw" visibility="protected" returnType="void">
+          <Argument type="double" name="amount"/>
+          <Argument type="String" name="password"/>
+        </Method>
+        <Method name="compoundInterest" visibility="protected" returnType="CompoundResult"/>
+        <Method name="toString" visibility="public" returnType="String"/>
+      </Methods>
+    </Class>
+    <Class xPosition="920.0" yPosition="20.0" package="banking" name="Database" visibility="public">
+      <Constructors>
+        <Constructor name="Database" visibility="public"/>
+      </Constructors>
+      <Fields>
+        <Field name="link" visibility="package" type="Connection"/>
+      </Fields>
+      <Methods>
+        <Method name="getConnection" visibility="protected" returnType="Connection" isFinal="true"/>
+        <Method name="writeToDatabase" visibility="public" returnType="void">
+          <Argument type="ArrayList&lt;Account&gt;" name="accounts"/>
+        </Method>
+        <Method name="readFromDatabase" visibility="public" returnType="ArrayList&lt;Account&gt;">
+          <Argument type="ArrayList&lt;Account&gt;" name="accounts"/>
+        </Method>
+      </Methods>
+    </Class>
+    <Class xPosition="20.0" yPosition="420.0" package="banking" name="SavingsAccount" visibility="public">
+      <Constructors>
+        <Constructor name="SavingsAccount" visibility="public">
+          <Argument type="double" name="balance"/>
+          <Argument type="String" name="holder"/>
+          <Argument type="String" name="password"/>
+        </Constructor>
+      </Constructors>
+      <Fields>
+        <Field name="maxWithdrawals" visibility="protected" type="int"/>
+      </Fields>
+      <Methods>
+        <Method name="withdraw" visibility="protected" returnType="void">
+          <Argument type="double" name="amount"/>
+          <Argument type="String" name="password"/>
+        </Method>
+        <Method name="compoundInterest" visibility="protected" returnType="CompoundResult"/>
+        <Method name="toString" visibility="public" returnType="String"/>
+      </Methods>
+    </Class>
+    <Class xPosition="320.0" yPosition="420.0" package="bankserver" name="BankServer" visibility="public">
+      <Constructors/>
+      <Fields>
+        <Field name="portNumber" visibility="package" type="int" isStatic="true"/>
+      </Fields>
+      <Methods>
+        <Method name="main" visibility="public" returnType="void" isStatic="true">
+          <Argument type="String[]" name="args"/>
+        </Method>
+        <Method name="getClients" visibility="public" returnType="void" isStatic="true">
+          <Argument type="ServerSocket" name="serverSocket"/>
+        </Method>
+      </Methods>
+    </Class>
+    <Class xPosition="620.0" yPosition="420.0" package="bankserver" name="ClientThread" visibility="public">
+      <Constructors>
+        <Constructor name="ClientThread" visibility="public">
+          <Argument type="Socket" name="csocket"/>
+        </Constructor>
+      </Constructors>
+      <Fields>
+        <Field name="bank" visibility="package" type="Bank"/>
+        <Field name="csocket" visibility="package" type="Socket"/>
+        <Field name="outToClient" visibility="package" type="ObjectOutputStream"/>
+        <Field name="inFromClient" visibility="package" type="ObjectInputStream"/>
+      </Fields>
+      <Methods>
+        <Method name="run" visibility="public" returnType="void"/>
+        <Method name="init" visibility="public" returnType="void"/>
+        <Method name="accountInit" visibility="public" returnType="boolean"/>
+        <Method name="begin" visibility="public" returnType="void"/>
+        <Method name="add" visibility="public" returnType="boolean"/>
+        <Method name="remove" visibility="public" returnType="boolean"/>
+        <Method name="authenticate" visibility="public" returnType="boolean"/>
+        <Method name="accountAction" visibility="public" returnType="boolean"/>
+        <Method name="interest" visibility="public" returnType="boolean"/>
+        <Method name="getBalance" visibility="public" returnType="boolean"/>
+        <Method name="withdrawals" visibility="public" returnType="boolean"/>
+      </Methods>
+    </Class>
+  </ClassDiagramComponents>
+  <ClassDiagramRelations>
+    <UseRelation source="Database" target="Account" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <HasRelation name="database" source="Bank" target="Database" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <IsRelation name="is" source="CheckingAccount" target="Account"/>
+    <IsRelation name="is" source="SavingsAccount" target="Account"/>
+    <HasRelation name="bank" source="ClientThread" target="Bank" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <HasRelation name="accounts" source="Bank" target="Account" sourceCardinality="1..1" targetCardinality="0..*" collectionType="List"/>
+    <UseRelation source="Bank" target="Account" sourceCardinality="1..1" targetCardinality="1..1"/>
+  </ClassDiagramRelations>
+</ClassDiagram>

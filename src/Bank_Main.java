@@ -6,7 +6,7 @@ public class Bank_Main {
 
 	public static void main(String[] args) {
 		
-            Bank bank = new Bank();
+            Bank bank = new Bank("sse554");
 		
             BankClient socket = new BankClient();
             socket.connect();

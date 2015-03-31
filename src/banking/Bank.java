@@ -13,12 +13,11 @@ public class Bank {
 	protected ArrayList<Account> accounts;
         public Database database;
 	
-	public Bank()
+	public Bank(String table)
 	{
             accounts = new ArrayList<>();
             try {
-                database = new Database();
-                database.readFromDatabase(accounts);
+                database = new Database("sse554");
                 
             } catch (SQLException | IOException ex) {
                 Logger.getLogger(Bank.class.getName()).log(Level.SEVERE, null, 
@@ -202,6 +201,15 @@ public class Bank {
                 Logger.getLogger(Bank.class.getName()).log(Level.SEVERE, null,
                         ex);
                 ex.printStackTrace();
+            }
+        }
+        
+        public void init()
+        {
+            try {
+                database.readFromDatabase(accounts);
+            } catch (SQLException ex) {
+                Logger.getLogger(Bank.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
 }

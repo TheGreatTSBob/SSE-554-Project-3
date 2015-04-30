@@ -1,10 +1,11 @@
 
-import banking.Account.CompoundResult;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
+import encryption.*;
+import java.security.Key;
 
 public class BankClient {
     
@@ -12,6 +13,7 @@ public class BankClient {
     static String computerName = "localhost";
     ObjectOutputStream outToServer;
     ObjectInputStream inFromServer;
+    ClientEncryptor ce;
     
     public BankClient()
     {
@@ -28,6 +30,9 @@ public class BankClient {
             inFromServer = new ObjectInputStream(csocket.getInputStream());
             
             System.out.println((String)inFromServer.readObject());
+            
+            ce = new ClientEncryptor((Key)inFromServer.readObject());
+            outToServer.writeObject(ce.getKey());
             // work with server
         } catch (Exception e) {
             e.printStackTrace();
@@ -49,11 +54,11 @@ public class BankClient {
         try
         {
             Integer i = 0;
-            outToServer.writeObject(i);
-            outToServer.writeObject(name);
-            outToServer.writeObject(password);
-            outToServer.writeObject(balance);
-            outToServer.writeObject(accountType);
+            outToServer.writeObject(ce.encrypt(Integer.toString(i)));
+            outToServer.writeObject(ce.encrypt(name));
+            outToServer.writeObject(ce.encrypt(password));
+            outToServer.writeObject(ce.encrypt(Double.toString(balance)));
+            outToServer.writeObject(ce.encrypt(Integer.toString(accountType)));
             boolean complete = (boolean)inFromServer.readObject();
         } catch (IOException e) {e.printStackTrace();}
         catch (ClassNotFoundException e) {e.printStackTrace();}
@@ -64,8 +69,8 @@ public class BankClient {
         try
         {
             Integer i = 1;
-            outToServer.writeObject(i);
-            outToServer.writeObject(name);
+            outToServer.writeObject(ce.encrypt(Integer.toString(i)));
+            outToServer.writeObject(ce.encrypt(name));
             boolean complete = (boolean)inFromServer.readObject();
         } catch (IOException e) {e.printStackTrace();}
         catch (ClassNotFoundException e) {e.printStackTrace();}
@@ -76,9 +81,9 @@ public class BankClient {
         try
         {
             Integer i = 2;
-            outToServer.writeObject(i);
-            outToServer.writeObject(name);
-            outToServer.writeObject(password);
+            outToServer.writeObject(ce.encrypt(Integer.toString(i)));
+            outToServer.writeObject(ce.encrypt(name));
+            outToServer.writeObject(ce.encrypt(password));
             return (boolean)inFromServer.readObject();
         } catch (IOException e) {e.printStackTrace();}
         catch (ClassNotFoundException e) {e.printStackTrace();}
@@ -91,10 +96,10 @@ public class BankClient {
         try
         {
             Integer i = 3;
-            outToServer.writeObject(i);
-            outToServer.writeObject(name);
-            outToServer.writeObject(amount);
-            outToServer.writeObject(password);
+            outToServer.writeObject(ce.encrypt(Integer.toString(i)));
+            outToServer.writeObject(ce.encrypt(name));
+            outToServer.writeObject(ce.encrypt(Double.toString(amount)));
+            outToServer.writeObject(ce.encrypt(password));
             boolean complete = (boolean)inFromServer.readObject();
             return complete;
         } catch (IOException e) {e.printStackTrace();}
@@ -108,7 +113,7 @@ public class BankClient {
         try
         {
             Integer i = 4;
-            outToServer.writeObject(i);
+            outToServer.writeObject(ce.encrypt(Integer.toString(i)));
             ArrayList<String> results = (ArrayList<String>)inFromServer.readObject();
             boolean complete = (boolean)inFromServer.readObject();
             
@@ -124,7 +129,7 @@ public class BankClient {
         try
         {
             Integer i = 5;
-            outToServer.writeObject(i);
+            outToServer.writeObject(ce.encrypt(Integer.toString(i)));
             ArrayList<String> accounts = (ArrayList<String>)inFromServer.readObject();
             boolean complete = (boolean)inFromServer.readObject();
             return accounts;
@@ -141,9 +146,9 @@ public class BankClient {
         try
         {
             Integer i = 6;
-            outToServer.writeObject(i);
-            outToServer.writeObject(name);
-            outToServer.writeObject(password);
+            outToServer.writeObject(ce.encrypt(Integer.toString(i)));
+            outToServer.writeObject(ce.encrypt(name));
+            outToServer.writeObject(ce.encrypt(password));
             balance = (Double)inFromServer.readObject();
         } catch (IOException e) {e.printStackTrace();}
         catch (ClassNotFoundException e) {e.printStackTrace();}
@@ -157,8 +162,8 @@ public class BankClient {
         try
         {
             Integer i = 7;
-            outToServer.writeObject(i);
-            outToServer.writeObject(name);
+            outToServer.writeObject(ce.encrypt(Integer.toString(i)));
+            outToServer.writeObject(ce.encrypt(name));
             text = (String)inFromServer.readObject();
         } catch (IOException e) {e.printStackTrace();}
         catch (ClassNotFoundException e) {e.printStackTrace();}

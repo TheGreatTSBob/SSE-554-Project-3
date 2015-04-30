@@ -14,6 +14,7 @@ import java.net.SocketException;
 import java.util.ArrayList;
 import banking.*;
 import banking.Account.CompoundResult;
+import Encryption.*;
 
 /**
  *
@@ -25,6 +26,7 @@ public class ClientThread extends Thread{
     Socket csocket;
     ObjectOutputStream outToClient;
     ObjectInputStream inFromClient;
+    ServerDecryptor sd;
     
     public ClientThread(Socket csocket)
     {
@@ -46,20 +48,13 @@ public class ClientThread extends Thread{
     {
         this.outToClient = new ObjectOutputStream(csocket.getOutputStream());
         this.inFromClient = new ObjectInputStream(csocket.getInputStream());
+        this.sd = new ServerDecryptor();
         
         outToClient.writeObject("Hello and welcome to the Bank Socket Server!");
+        outToClient.writeObject(sd.getPublic());
+        
+        sd.initCipher((byte[]) inFromClient.readObject());
         begin();
-    }
-    
-    public boolean accountInit() throws IOException, ClassNotFoundException
-    {
-        // Get the accounts from the database
-        ArrayList<String> accounts = bank.getLabels();
-        
-        System.out.println("Reset account list.");
-        
-        outToClient.writeObject(accounts);
-        return true;
     }
     
     public void begin() throws IOException, ClassNotFoundException
@@ -68,7 +63,7 @@ public class ClientThread extends Thread{
             while (!csocket.isClosed())
             {
                 Integer todo;
-                todo = (Integer)inFromClient.readObject();
+                todo = Integer.parseInt(sd.decrypt((byte[])inFromClient.readObject()));
 
                 boolean complete;
 
@@ -124,10 +119,12 @@ public class ClientThread extends Thread{
         try
         {
             System.out.println("Add account");
-            String name = (String)inFromClient.readObject();
-            String password = (String)inFromClient.readObject();
-            Double balance = (Double)inFromClient.readObject();
-            Integer accType = (Integer)inFromClient.readObject();
+            String name = sd.decrypt((byte[])inFromClient.readObject());
+            String password = sd.decrypt((byte[])inFromClient.readObject());
+            String bal = sd.decrypt((byte[])inFromClient.readObject());
+            Double balance = Double.parseDouble(bal);
+            String acc = sd.decrypt((byte[])inFromClient.readObject());
+            Integer accType = Integer.parseInt(acc);
             
             if(accType == 2)
                 bank.addAccount(new SavingsAccount(balance, name, password));
@@ -152,7 +149,7 @@ public class ClientThread extends Thread{
     {
         try
         {
-            String name = (String)inFromClient.readObject();
+            String name = sd.decrypt((byte[])inFromClient.readObject());
             
             bank.removeAccount(name);
             System.out.println("Account of " + name + " deleted.");
@@ -172,8 +169,8 @@ public class ClientThread extends Thread{
         try
         {
             boolean validated = true;
-            String name = (String)inFromClient.readObject();
-            String password = (String)inFromClient.readObject();
+            String name = sd.decrypt((byte[])inFromClient.readObject());
+            String password = sd.decrypt((byte[])inFromClient.readObject());
 
             bank.authenticateAccount(name, password);
             System.out.println("Account authenticated");
@@ -192,9 +189,10 @@ public class ClientThread extends Thread{
     {
         try
         {
-            String name = (String)inFromClient.readObject();
-            Double amount = (Double)inFromClient.readObject();
-            String password = (String) inFromClient.readObject();
+            String name = sd.decrypt((byte[])inFromClient.readObject());
+            String am = sd.decrypt((byte[])inFromClient.readObject());
+            Double amount = Double.parseDouble(am);
+            String password = sd.decrypt((byte[])inFromClient.readObject());
             
             if(amount < 0)
             {
@@ -237,13 +235,24 @@ public class ClientThread extends Thread{
         return false;
     }
     
+    public boolean accountInit() throws IOException, ClassNotFoundException
+    {
+        // Get the accounts from the database
+        ArrayList<String> accounts = bank.getLabels();
+        
+        System.out.println("Reset account list.");
+        
+        outToClient.writeObject(accounts);
+        return true;
+    }
+    
     public boolean getBalance()
     {
         try
         {
             Double balance = 0.0;
-            String name = (String)inFromClient.readObject();
-            String password = (String)inFromClient.readObject();
+            String name = sd.decrypt((byte[])inFromClient.readObject());
+            String password = sd.decrypt((byte[])inFromClient.readObject());
             
             balance = bank.getBalance(name, password);
             System.out.println("Getting account balance of " + name);
@@ -264,7 +273,7 @@ public class ClientThread extends Thread{
         {
             // Should be in form of "Withdraw (#)" if checking or "Withdraw"
             String text = "Withdraw"; 
-            String name = (String)inFromClient.readObject();
+            String name = sd.decrypt((byte[])inFromClient.readObject());
             
             // Get balance
             int index = bank.getIndex(name);

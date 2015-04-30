@@ -11,6 +11,8 @@ public class Bank_Main {
             BankClient socket = new BankClient();
             socket.connect();
                 
+            socket.addAccount("Josh", "Password", 100.00, 1);
+            
             BankGUI main = new BankGUI(bank, socket);
 		
             main.showHome();

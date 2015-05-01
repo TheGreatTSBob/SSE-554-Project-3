@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import banking.*;
 import banking.Account.CompoundResult;
 import Encryption.*;
+import java.security.Key;
 
 /**
  *
@@ -27,6 +28,7 @@ public class ClientThread extends Thread{
     ObjectOutputStream outToClient;
     ObjectInputStream inFromClient;
     ServerDecryptor sd;
+    EncryptionUtility encryptor;
     
     public ClientThread(Socket csocket)
     {
@@ -54,6 +56,10 @@ public class ClientThread extends Thread{
         outToClient.writeObject(sd.getPublic());
         
         sd.initCipher((byte[]) inFromClient.readObject());
+        
+        //create an encryptor and set the public key;
+        encryptor = new EncryptionUtility((Key) inFromClient.readObject());
+        outToClient.writeObject(encryptor.wrapSymmetricKey());
         begin();
     }
     
@@ -71,32 +77,32 @@ public class ClientThread extends Thread{
                 {
                     // Add a user
                     case 0: complete = add();
-                        outToClient.writeObject(complete);
+                        outToClient.writeObject(encryptor.Encrypt(((Boolean)complete).toString()));
                         break;
 
                     // Remove a user
                     case 1: complete = remove();
-                        outToClient.writeObject(complete);
+                        outToClient.writeObject(encryptor.Encrypt(((Boolean)complete).toString()));
                         break;
 
                     // Authenticate login
                     case 2: complete = authenticate();
-                        outToClient.writeObject(complete);
+                        outToClient.writeObject(encryptor.Encrypt(((Boolean)complete).toString()));
                         break;
 
                     // Withdraw or deposit
                     case 3: complete = accountAction();
-                        outToClient.writeObject(complete);
+                        outToClient.writeObject(encryptor.Encrypt(((Boolean)complete).toString()));
                         break;
 
                     // Interest
                     case 4: complete = interest();
-                        outToClient.writeObject(complete);
+                        outToClient.writeObject(encryptor.Encrypt(((Boolean)complete).toString()));
                         break;
 
                     // Reset account list
                     case 5: complete = accountInit();
-                        outToClient.writeObject(complete);
+                        outToClient.writeObject(encryptor.Encrypt(((Boolean)complete).toString()));
                         break;
                         
                     // Get balance of account
@@ -218,16 +224,17 @@ public class ClientThread extends Thread{
         {
             System.out.println("Perform interest operation");
             
-            ArrayList<String> results= new ArrayList<>();
+            ArrayList<byte[]> encryptedResults= new ArrayList<>();
             
             ArrayList<CompoundResult> cmp = bank.compoundAll();
             
             for(int i =0; i < bank.size(); i++)
             {
-                results.add(bank.getHolder(i) + "  " + cmp.get(i).toString());
+                encryptedResults.add(encryptor.Encrypt(
+                        bank.getHolder(i) + "  " + cmp.get(i).toString()));
             }
-            
-            outToClient.writeObject(results);
+                        
+            outToClient.writeObject(encryptedResults);
             return true;
         } catch (IOException e) {
             System.out.println("IOException");
@@ -239,10 +246,16 @@ public class ClientThread extends Thread{
     {
         // Get the accounts from the database
         ArrayList<String> accounts = bank.getLabels();
+        ArrayList<byte[]> encryptedNames = new ArrayList<>();
+        
+        for(String name: accounts)
+        {
+            encryptedNames.add(encryptor.Encrypt(name));
+        }
         
         System.out.println("Reset account list.");
         
-        outToClient.writeObject(accounts);
+        outToClient.writeObject(encryptedNames);
         return true;
     }
     
@@ -257,7 +270,7 @@ public class ClientThread extends Thread{
             balance = bank.getBalance(name, password);
             System.out.println("Getting account balance of " + name);
             
-            outToClient.writeObject(balance);
+            outToClient.writeObject(encryptor.Encrypt(balance.toString()));
             return true;
         } catch (IOException e) {
             System.out.println("IOException");
@@ -281,7 +294,7 @@ public class ClientThread extends Thread{
                 text += " " + bank.remainingWithdrawals(index);
             System.out.println("Getting account withdrawals of " + name);
             
-            outToClient.writeObject(text);
+            outToClient.writeObject(encryptor.Encrypt(text));
             return true;
         } catch (IOException e) {
             System.out.println("IOException");

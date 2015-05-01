@@ -14,6 +14,7 @@ public class BankClient {
     ObjectOutputStream outToServer;
     ObjectInputStream inFromServer;
     ClientEncryptor ce;
+    EncryptionUtility decrypter;
     
     public BankClient()
     {
@@ -33,6 +34,11 @@ public class BankClient {
             
             ce = new ClientEncryptor((Key)inFromServer.readObject());
             outToServer.writeObject(ce.getKey());
+            
+            decrypter = new EncryptionUtility(); 
+            outToServer.writeObject(decrypter.getPublicKey());
+            decrypter.unwrapKey((byte[]) inFromServer.readObject());
+            
             // work with server
         } catch (Exception e) {
             e.printStackTrace();
@@ -59,7 +65,10 @@ public class BankClient {
             outToServer.writeObject(ce.encrypt(password));
             outToServer.writeObject(ce.encrypt(Double.toString(balance)));
             outToServer.writeObject(ce.encrypt(Integer.toString(accountType)));
-            boolean complete = (boolean)inFromServer.readObject();
+            
+            boolean complete = Boolean.parseBoolean(
+                    decrypter.Decrypt( (byte []) inFromServer.readObject()));
+        
         } catch (IOException e) {e.printStackTrace();}
         catch (ClassNotFoundException e) {e.printStackTrace();}
     }
@@ -71,7 +80,8 @@ public class BankClient {
             Integer i = 1;
             outToServer.writeObject(ce.encrypt(Integer.toString(i)));
             outToServer.writeObject(ce.encrypt(name));
-            boolean complete = (boolean)inFromServer.readObject();
+            boolean complete = Boolean.parseBoolean(
+                    decrypter.Decrypt( (byte []) inFromServer.readObject()));
         } catch (IOException e) {e.printStackTrace();}
         catch (ClassNotFoundException e) {e.printStackTrace();}
     }
@@ -84,7 +94,8 @@ public class BankClient {
             outToServer.writeObject(ce.encrypt(Integer.toString(i)));
             outToServer.writeObject(ce.encrypt(name));
             outToServer.writeObject(ce.encrypt(password));
-            return (boolean)inFromServer.readObject();
+            return (boolean)Boolean.parseBoolean(
+                    decrypter.Decrypt( (byte []) inFromServer.readObject()));
         } catch (IOException e) {e.printStackTrace();}
         catch (ClassNotFoundException e) {e.printStackTrace();}
         
@@ -100,7 +111,8 @@ public class BankClient {
             outToServer.writeObject(ce.encrypt(name));
             outToServer.writeObject(ce.encrypt(Double.toString(amount)));
             outToServer.writeObject(ce.encrypt(password));
-            boolean complete = (boolean)inFromServer.readObject();
+            boolean complete = Boolean.parseBoolean(
+                    decrypter.Decrypt( (byte []) inFromServer.readObject()));;
             return complete;
         } catch (IOException e) {e.printStackTrace();}
         catch (ClassNotFoundException e) {e.printStackTrace();}
@@ -114,8 +126,15 @@ public class BankClient {
         {
             Integer i = 4;
             outToServer.writeObject(ce.encrypt(Integer.toString(i)));
-            ArrayList<String> results = (ArrayList<String>)inFromServer.readObject();
-            boolean complete = (boolean)inFromServer.readObject();
+            ArrayList<byte[]> encryptedResults = (ArrayList<byte[]>)inFromServer.readObject();
+            ArrayList<String> results = new ArrayList<>();
+            for(byte[] encryptedName: encryptedResults)
+            {
+                results.add(decrypter.Decrypt(encryptedName));
+            }
+            
+            boolean complete = Boolean.parseBoolean(
+                    decrypter.Decrypt( (byte []) inFromServer.readObject()));;
             
             return results;
         } catch (IOException e) {e.printStackTrace();}
@@ -130,8 +149,14 @@ public class BankClient {
         {
             Integer i = 5;
             outToServer.writeObject(ce.encrypt(Integer.toString(i)));
-            ArrayList<String> accounts = (ArrayList<String>)inFromServer.readObject();
-            boolean complete = (boolean)inFromServer.readObject();
+            ArrayList<byte[]> encryptedNames = (ArrayList<byte[]>)inFromServer.readObject();
+            ArrayList<String> accounts = new ArrayList<>();
+            for(byte[] encryptedName: encryptedNames)
+            {
+                accounts.add(decrypter.Decrypt(encryptedName));
+            }
+            boolean complete = Boolean.parseBoolean(
+                    decrypter.Decrypt( (byte []) inFromServer.readObject()));;
             return accounts;
         } catch (IOException e) {e.printStackTrace();}
         catch (ClassNotFoundException e) {e.printStackTrace();}
@@ -149,7 +174,8 @@ public class BankClient {
             outToServer.writeObject(ce.encrypt(Integer.toString(i)));
             outToServer.writeObject(ce.encrypt(name));
             outToServer.writeObject(ce.encrypt(password));
-            balance = (Double)inFromServer.readObject();
+            String temp = decrypter.Decrypt((byte[])inFromServer.readObject());
+            balance = Double.parseDouble(temp);
         } catch (IOException e) {e.printStackTrace();}
         catch (ClassNotFoundException e) {e.printStackTrace();}
         
@@ -164,7 +190,7 @@ public class BankClient {
             Integer i = 7;
             outToServer.writeObject(ce.encrypt(Integer.toString(i)));
             outToServer.writeObject(ce.encrypt(name));
-            text = (String)inFromServer.readObject();
+            text = decrypter.Decrypt((byte[])inFromServer.readObject());
         } catch (IOException e) {e.printStackTrace();}
         catch (ClassNotFoundException e) {e.printStackTrace();}
         

@@ -18,14 +18,10 @@ import static org.junit.Assert.*;
  *
  * @author TSBob
  */
-public class SeverSideEncryptionTest {
+public class EncryptionTest {
     
-    public SeverSideEncryptionTest() {
+    public EncryptionTest() {
     }
-
-     @Test
-     public void KeyGeneratorTest() throws NoSuchAlgorithmException {
-     }
     
      @Test
      public void EncryptionTest() {
@@ -33,16 +29,17 @@ public class SeverSideEncryptionTest {
          String original = "If you want to increase your sucess rate,"
                  + "double your failure rate.";
          
-         ServerSideEncryption decrypt = new ServerSideEncryption();
-         ServerSideEncryption encrypt = new ServerSideEncryption(decrypt.getPublicKey());
+         EncryptionUtility decrypter = new EncryptionUtility();
+         EncryptionUtility encryptor = new EncryptionUtility(decrypter.getPublicKey());
          
-         byte[] wrappedKey = encrypt.wrapSymmetricKey();
-         byte[] encrypted = encrypt.Encrypt(original);
+         byte[] wrappedKey = encryptor.wrapSymmetricKey();
+         byte[] encryptedMessage = encryptor.Encrypt(original);
          
-         assertFalse(original.getBytes() == encrypted);
+         assertFalse(original.getBytes() == encryptedMessage);
          
-         String decrypted = decrypt.Decrypt(wrappedKey, encrypted);
+         decrypter.unwrapKey(wrappedKey);
+         String decryptedMessage = decrypter.Decrypt(encryptedMessage);
          
-         assertEquals(original, decrypted);
+         assertEquals(original, decryptedMessage);
      }
 }

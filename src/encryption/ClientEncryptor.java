@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package encryption;
+package Encryption;
 
 import java.nio.charset.Charset;
 import java.security.InvalidKeyException;

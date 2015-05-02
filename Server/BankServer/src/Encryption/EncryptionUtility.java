@@ -45,7 +45,7 @@ public class EncryptionUtility {
             generateSymmetricKey();
         }
         
-        public byte[] encrypt(String input)
+        private byte[] encrypt(String input)
         {
             try {
                 cipher = Cipher.getInstance("AES");
@@ -79,7 +79,7 @@ public class EncryptionUtility {
             }
         }
         
-        public byte[] wrapSymmetricKey()
+        private byte[] wrapSymmetricKey()
         {
             try {
                 Cipher pubCipher = Cipher.getInstance("RSA");
@@ -114,7 +114,7 @@ public class EncryptionUtility {
             }
         }
         
-        public void unwrapKey(byte [] key)
+        private void unwrapKey(byte [] key)
         {
             try {
                 wrappedKey = key;
@@ -128,7 +128,7 @@ public class EncryptionUtility {
 
         }
         
-        public String decrypt( byte[] input)
+        private String decrypt( byte[] input)
         {
             try {
                 cipher = Cipher.getInstance("AES");

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ClassDiagram name="Reverse engineered encryption 2015.05.01 21-53-18-063">
+  <ClassDiagramComponents>
+    <Class xPosition="20.0" yPosition="20.0" package="encryption" name="ClientEncryptor" visibility="public">
+      <Constructors>
+        <Constructor name="ClientEncryptor" visibility="public">
+          <Argument type="Key" name="publicKey"/>
+        </Constructor>
+      </Constructors>
+      <Fields>
+        <Field name="cipher" visibility="private" type="Cipher"/>
+        <Field name="wrappedKey" visibility="package" type="byte[]"/>
+        <Field name="key" visibility="package" type="SecretKey"/>
+      </Fields>
+      <Methods>
+        <Method name="encrypt" visibility="public" returnType="byte[]">
+          <Argument type="String" name="input"/>
+        </Method>
+        <Method name="getKey" visibility="public" returnType="byte[]"/>
+        <Method name="getClientKey" visibility="public" returnType="Key"/>
+      </Methods>
+    </Class>
+    <Class xPosition="320.0" yPosition="20.0" package="encryption" name="EncryptionUtility" visibility="public">
+      <Constructors>
+        <Constructor name="EncryptionUtility" visibility="public"/>
+        <Constructor name="EncryptionUtility" visibility="public">
+          <Argument type="Key" name="publicKey"/>
+        </Constructor>
+      </Constructors>
+      <Fields>
+        <Field name="KEYSIZE" visibility="public" type="int" isStatic="true" isFinal="true"/>
+        <Field name="cipher" visibility="private" type="Cipher"/>
+        <Field name="secretKey" visibility="private" type="SecretKey"/>
+        <Field name="publicKey" visibility="private" type="Key"/>
+        <Field name="privateKey" visibility="private" type="Key"/>
+        <Field name="wrappedKey" visibility="package" type="byte[]"/>
+      </Fields>
+      <Methods>
+        <Method name="Encrypt" visibility="public" returnType="byte[]">
+          <Argument type="String" name="input"/>
+        </Method>
+        <Method name="Decrypt" visibility="public" returnType="String">
+          <Argument type="byte[]" name="input"/>
+        </Method>
+        <Method name="createKeyPair" visibility="private" returnType="void"/>
+        <Method name="generateSymmetricKey" visibility="private" returnType="void"/>
+        <Method name="wrapSymmetricKey" visibility="public" returnType="byte[]"/>
+        <Method name="unwrapKey" visibility="public" returnType="void">
+          <Argument type="byte[]" name="key"/>
+        </Method>
+        <Method name="getPublicKey" visibility="public" returnType="Key"/>
+      </Methods>
+    </Class>
+  </ClassDiagramComponents>
+  <ClassDiagramRelations/>
+</ClassDiagram>

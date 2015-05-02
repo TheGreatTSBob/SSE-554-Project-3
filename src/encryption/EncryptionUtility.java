@@ -34,115 +34,151 @@ public class EncryptionUtility {
     private Key privateKey;
     byte[] wrappedKey;
     
+    private Encryptor encrypt;
+    private Decrypter decrypt;
+    
+    
+    private class Encryptor
+    {
+        private Encryptor()
+        {
+            generateSymmetricKey();
+        }
+        
+        public byte[] encrypt(String input)
+        {
+            try {
+                cipher = Cipher.getInstance("AES");
+                cipher.init(Cipher.ENCRYPT_MODE, secretKey);
+
+            } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException ex) {
+                Logger.getLogger(EncryptionUtility.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+            byte[] output = null;
+
+            try {
+                byte[] in = input.getBytes(Charset.forName("UTF-8"));
+                output = cipher.doFinal(in);
+
+            } catch (IllegalBlockSizeException | BadPaddingException ex) {
+                Logger.getLogger(EncryptionUtility.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            return output;
+        }
+        
+        private void generateSymmetricKey()
+        {
+            try {
+                KeyGenerator keygen = KeyGenerator.getInstance("AES");
+                SecureRandom random = new SecureRandom();
+                keygen.init(random);
+                secretKey = keygen.generateKey();
+            } catch (NoSuchAlgorithmException ex) {
+                Logger.getLogger(EncryptionUtility.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        
+        public byte[] wrapSymmetricKey()
+        {
+            try {
+                Cipher pubCipher = Cipher.getInstance("RSA");
+                pubCipher.init(Cipher.WRAP_MODE, publicKey);
+                return pubCipher.wrap(secretKey);
+            } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IllegalBlockSizeException ex) {
+                Logger.getLogger(EncryptionUtility.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+            return null;
+        }
+    }
+    
+    private class Decrypter
+    {
+        private Decrypter(){
+            createKeyPair();
+        }
+        
+        private void createKeyPair()
+        {
+            try {
+                KeyPairGenerator pairgen = KeyPairGenerator.getInstance("RSA");
+                SecureRandom random = new SecureRandom();
+                pairgen.initialize(KEYSIZE, random);
+                KeyPair keyPair = pairgen.generateKeyPair();
+
+                publicKey = keyPair.getPublic();
+                privateKey = keyPair.getPrivate();
+            } catch (NoSuchAlgorithmException ex) {
+                Logger.getLogger(EncryptionUtility.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        
+        public void unwrapKey(byte [] key)
+        {
+            try {
+                wrappedKey = key;
+
+                Cipher publicCipher = Cipher.getInstance("RSA");
+                publicCipher.init(Cipher.UNWRAP_MODE, privateKey);
+                secretKey = (SecretKey) publicCipher.unwrap(wrappedKey, "AES", Cipher.SECRET_KEY);
+            } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException ex) {
+                Logger.getLogger(EncryptionUtility.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+        }
+        
+        public String decrypt( byte[] input)
+        {
+            try {
+                cipher = Cipher.getInstance("AES");
+                cipher.init(Cipher.DECRYPT_MODE, secretKey);
+            } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException ex) {
+                Logger.getLogger(EncryptionUtility.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+            String output = null;
+
+            try {
+                byte[] decrypt = cipher.doFinal(input);
+                output = new String(decrypt, Charset.forName("UTF-8"));
+
+            } catch (IllegalBlockSizeException | BadPaddingException ex) {
+                Logger.getLogger(EncryptionUtility.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            return output;
+        }
+    }
+    
     public EncryptionUtility()
     {
-        createKeyPair();
+        decrypt = new Decrypter();
     }
     
     public EncryptionUtility(Key publicKey)
     {
         this.publicKey = publicKey;
-        generateSymmetricKey();
+        encrypt = new Encryptor();
     }
     
     public byte[] Encrypt(String input)
     {
-        try {
-                        
-            cipher = Cipher.getInstance("AES");
-            cipher.init(Cipher.ENCRYPT_MODE, secretKey);
-            
-        } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException ex) {
-            Logger.getLogger(EncryptionUtility.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
-        byte[] output = null;
-        
-        try {
-            byte[] in = input.getBytes(Charset.forName("UTF-8"));
-            output = cipher.doFinal(in);
-            
-        } catch (IllegalBlockSizeException | BadPaddingException ex) {
-            Logger.getLogger(EncryptionUtility.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return output;
+        return encrypt.encrypt(input);
     }
     
     public String Decrypt( byte[] input)
     {
-        try {
-                    
-            // Create symmetric cipher from received key
-            cipher = Cipher.getInstance("AES");
-            cipher.init(Cipher.DECRYPT_MODE, secretKey);
-        } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException ex) {
-            Logger.getLogger(EncryptionUtility.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
-        String output = null;
-        
-        try {
-            byte[] decrypt = cipher.doFinal(input);
-            output = new String(decrypt, Charset.forName("UTF-8"));
-            
-        } catch (IllegalBlockSizeException | BadPaddingException ex) {
-            Logger.getLogger(EncryptionUtility.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return output;
-    }
-    
-    private void createKeyPair()
-    {
-        try {
-            KeyPairGenerator pairgen = KeyPairGenerator.getInstance("RSA");
-            SecureRandom random = new SecureRandom();
-            pairgen.initialize(KEYSIZE, random);
-            KeyPair keyPair = pairgen.generateKeyPair();
-            
-            publicKey = keyPair.getPublic();
-            privateKey = keyPair.getPrivate();
-        } catch (NoSuchAlgorithmException ex) {
-            Logger.getLogger(EncryptionUtility.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-    
-    private void generateSymmetricKey()
-    {
-        try {
-            KeyGenerator keygen = KeyGenerator.getInstance("AES");
-            SecureRandom random = new SecureRandom();
-            keygen.init(random);
-            secretKey = keygen.generateKey();
-        } catch (NoSuchAlgorithmException ex) {
-            Logger.getLogger(EncryptionUtility.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        return decrypt.decrypt(input);
     }
     
     public byte[] wrapSymmetricKey()
     {
-        try {
-            Cipher pubCipher = Cipher.getInstance("RSA");
-            pubCipher.init(Cipher.WRAP_MODE, publicKey);
-            return pubCipher.wrap(secretKey);
-        } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IllegalBlockSizeException ex) {
-            Logger.getLogger(EncryptionUtility.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
-        return null;
+        return encrypt.wrapSymmetricKey();
     }
     
     public void unwrapKey(byte [] key)
     {
-        try {
-            this.wrappedKey = key;
-            
-            Cipher publicCipher = Cipher.getInstance("RSA");
-            publicCipher.init(Cipher.UNWRAP_MODE, privateKey);
-            secretKey = (SecretKey) publicCipher.unwrap(wrappedKey, "AES", Cipher.SECRET_KEY);
-        } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException ex) {
-            Logger.getLogger(EncryptionUtility.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
+        decrypt.unwrapKey(key);
     }
     
     public Key getPublicKey()

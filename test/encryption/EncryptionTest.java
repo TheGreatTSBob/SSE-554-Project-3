@@ -19,27 +19,27 @@ import static org.junit.Assert.*;
  * @author TSBob
  */
 public class EncryptionTest {
-    
+
     public EncryptionTest() {
     }
-    
+
      @Test
      public void EncryptionTest() {
-         
+
          String original = "If you want to increase your sucess rate,"
                  + "double your failure rate.";
-         
+
          EncryptionUtility decrypter = new EncryptionUtility();
          EncryptionUtility encryptor = new EncryptionUtility(decrypter.getPublicKey());
-         
+
          byte[] wrappedKey = encryptor.wrapSymmetricKey();
          byte[] encryptedMessage = encryptor.Encrypt(original);
-         
+
          assertFalse(original.getBytes() == encryptedMessage);
-         
+
          decrypter.unwrapKey(wrappedKey);
          String decryptedMessage = decrypter.Decrypt(encryptedMessage);
-         
+
          assertEquals(original, decryptedMessage);
      }
 }
